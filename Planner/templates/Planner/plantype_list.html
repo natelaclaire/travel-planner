@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Plan Type List</h1>
+  {% if plantype_list %}
+    <ul>
+      {% for plantype in plantype_list %}
+      <li>
+        <a href="{{ plantype.get_absolute_url }}">{{ plantype.name }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no plan types.</p>
+  {% endif %}
+{% endblock %}

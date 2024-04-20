@@ -1,0 +1,59 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>{{ plan.description }}</h1>
+    <p><strong>Type:</strong> {{ plan.type }}</p>
+    <p><strong>Status:</strong> {{ plan.status }}</p>
+    <p><strong>Notes:</strong> {{ plan.notes }}</p>
+    <p><strong>Scheduled Start Date and Time:</strong> {{ plan.scheduled_start_date_time }}</p>
+    <p><strong>Scheduled End Date and Time:</strong> {{ plan.scheduled_end_date_time }}</p>
+
+    <h2>Todos</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for todo in plan.todo_set.all %}
+            <tr>
+                <td>
+                    {{ todo.description }}
+                </td>
+                <td>
+                    {{ todo.due_date }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Budget</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Due Date</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for budgetitem in plan.budgetitem_set.all %}
+            <tr>
+                <td>
+                    {{ budgetitem.description }}
+                </td>
+                <td>
+                    {{ budgetitem.due_date }}
+                </td>
+                <td>
+                    {{ budgetitem.amount }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

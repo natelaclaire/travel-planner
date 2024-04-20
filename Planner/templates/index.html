@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Travel Planner Home</h1>
+  <p>The planner has the following record counts:</p>
+  <ul>
+    <li><strong>Trips:</strong> {{ num_trips }}</li>
+    <li><strong>Plans:</strong> {{ num_plans }}</li>
+    <li><strong>Todos:</strong> {{ num_todos }}</li>
+    <li><strong>Budget Items:</strong> {{ num_budget_items }}</li>
+    <li><strong>Past Due Todos:</strong> {{ num_past_due_todos }}</li>
+    <li><strong>Past Due Budget Items:</strong> {{ num_past_due_budget_items }}</li>
+  </ul>
+{% endblock %}
+
+{% block title %}
+  <title>Travel Planner Home</title>
+{% endblock %}
