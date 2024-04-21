@@ -29,8 +29,10 @@
         <thead>
             <tr>
                 <th>Description</th>
+                <th>Notes</th>
                 <th>Due Date</th>
                 <th>Associated Plan</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -40,13 +42,39 @@
                     {{ todo.description }}
                 </td>
                 <td>
+                    {{ todo.notes }}
+                </td>
+                <td>
+                    {% if todo.date_completed %}
+                    Completed {{ todo.date_completed }}
+                    {% else %}
                     {{ todo.due_date }}
+                    {% endif %}
                 </td>
                 <td>
                     <a href="{{ todo.plan.get_absolute_url }}">{{ todo.plan.description }}</a>
                 </td>
+                <td>
+                    {% if not todo.date_completed %}
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="completetodo" value="{{ todo.id }}">
+                        <input type="submit" value="Mark Completed" class="btn btn-primary">
+                    </form>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <tr>
+                <td>{{ todoform.description }}</td>
+                <td>{{ todoform.notes }}</td>
+                <td>{{ todoform.due_date }}</td>
+                <td>{{ todoform.plan }}</td>
+                <td><input type="submit" value="Add" class="btn btn-primary"> {{ todoform.trip.as_hidden }}<input type="hidden" name="addtype" value="todo"></td>
+            </tr>
+        </form>
         </tbody>
     </table>
 
@@ -55,6 +83,8 @@
         <thead>
             <tr>
                 <th>Description</th>
+                <th>Notes</th>
+                <th>Type</th>
                 <th>Due Date</th>
                 <th>Amount</th>
                 <th>Associated Plan</th>
@@ -67,6 +97,12 @@
                     {{ budgetitem.description }}
                 </td>
                 <td>
+                    {{ budgetitem.notes }}
+                </td>
+                <td>
+                    {{ budgetitem.type }}
+                </td>
+                <td>
                     {{ budgetitem.due_date }}
                 </td>
                 <td>
@@ -75,8 +111,21 @@
                 <td>
                     <a href="{{ budgetitem.plan.get_absolute_url }}">{{ budgetitem.plan.description }}</a>
                 </td>
+                <td></td>
             </tr>
         {% endfor %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <tr>
+                <td>{{ budgetitemform.description }}</td>
+                <td>{{ budgetitemform.notes }}</td>
+                <td>{{ budgetitemform.type }}</td>
+                <td>{{ budgetitemform.due_date }}</td>
+                <td>{{ budgetitemform.amount }}</td>
+                <td>{{ budgetitemform.plan }}</td>
+                <td><input type="submit" value="Add" class="btn btn-primary"> {{ budgetitemform.trip.as_hidden }}<input type="hidden" name="addtype" value="budgetitem"></td>
+            </tr>
+        </form>
         </tbody>
     </table>
 

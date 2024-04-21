@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
+from .forms import AddTripTodoForm, AddTripBudgetItemForm
 # Create your views here.
 from .models import PlanType, PlanStatus, Plan, Trip, Todo, BudgetItem
 
@@ -60,6 +61,47 @@ class TripListView(generic.ListView):
 
 class TripDetailView(generic.DetailView):
     model = Trip
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        data = {'trip': self.object}
+        context["todoform"] = AddTripTodoForm(initial=data)
+        context["budgetitemform"] = AddTripBudgetItemForm(initial=data)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('addtype')=="todo":
+            form = AddTripTodoForm(request.POST)
+            if form.is_valid():
+                todo = form.save()
+
+                return HttpResponseRedirect(reverse('trip-detail', args=[todo.trip_id]))
+
+            else:
+                self.object = self.get_object()
+                context = super(self).get_context_data(**kwargs)
+                context['todoform'] = form
+                return self.render_to_response(context=context)
+
+        elif request.POST.get('addtype')=="budgetitem":
+            form = AddTripBudgetItemForm(request.POST)
+            if form.is_valid():
+                budgetitem = form.save()
+
+                return HttpResponseRedirect(reverse('trip-detail', args=[budgetitem.trip_id]))
+
+            else:
+                self.object = self.get_object()
+                context = super(self).get_context_data(**kwargs)
+                context['budgetitemform'] = form
+                return self.render_to_response(context=context)
+
+        elif request.POST.get('completetodo'):
+            todo = Todo.objects.get(pk=request.POST['completetodo'])
+            todo.date_completed = datetime.now()
+            todo.save()
+            return HttpResponseRedirect(reverse('trip-detail', args=[todo.trip_id]))
 
 class PlanDetailView(generic.DetailView):
     model = Plan
