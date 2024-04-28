@@ -1,5 +1,9 @@
 {% extends "base_generic.html" %}
 
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">Trips</li>
+{% endblock %}
+
 {% block content %}
   <h1>Trip List</h1>
   {% if trip_list %}

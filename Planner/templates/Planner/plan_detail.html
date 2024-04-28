@@ -1,5 +1,13 @@
 {% extends "base_generic.html" %}
 
+{% load humanize %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    <li class="breadcrumb-item"><a href="{{ plan.trip.get_absolute_url }}">{{ plan.trip.destination }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ plan.description }}</li>
+{% endblock %}
+
 {% block content %}
   <h1>{{ plan.description }}</h1>
     <p><strong>Type:</strong> {{ plan.type }}</p>
@@ -7,13 +15,28 @@
     <p><strong>Notes:</strong> {{ plan.notes }}</p>
     <p><strong>Scheduled Start Date and Time:</strong> {{ plan.scheduled_start_date_time }}</p>
     <p><strong>Scheduled End Date and Time:</strong> {{ plan.scheduled_end_date_time }}</p>
+    <p><strong>Budget:</strong>
+        {% if budget.total == None %}
+        $0.00
+        {% else %}
+        ${{ budget.total|floatformat:2|intcomma }}
+        {% endif %}
+        (
+        {% if budget_expended.total == None %}
+        $0.00
+        {% else %}
+        ${{ budget_expended.total|floatformat:2|intcomma }}
+        {% endif %}
+        expended )</p>
 
     <h2>Todos</h2>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Description</th>
+                <th>Notes</th>
                 <th>Due Date</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -23,10 +46,36 @@
                     {{ todo.description }}
                 </td>
                 <td>
+                    {{ todo.notes }}
+                </td>
+                <td>
+                    {% if todo.date_completed %}
+                    Completed {{ todo.date_completed }}
+                    {% else %}
                     {{ todo.due_date }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'todo-update' pk=todo.id %}" class="btn btn-primary">Edit</a>
+                    {% if not todo.date_completed %}
+                    <form action="" method="post" class="d-inline-block">
+                        {% csrf_token %}
+                        <input type="hidden" name="completetodo" value="{{ todo.id }}">
+                        <input type="submit" value="Done" class="btn btn-primary">
+                    </form>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <tr>
+                <td>{{ todoform.description }}</td>
+                <td>{{ todoform.notes }}</td>
+                <td>{{ todoform.due_date }}</td>
+                <td><input type="submit" value="Add" class="btn btn-primary"> {{ todoform.plan.as_hidden }} {{ todoform.trip.as_hidden }}<input type="hidden" name="addtype" value="todo"></td>
+            </tr>
+        </form>
         </tbody>
     </table>
 
@@ -35,8 +84,11 @@
         <thead>
             <tr>
                 <th>Description</th>
+                <th>Notes</th>
+                <th>Type</th>
                 <th>Due Date</th>
                 <th>Amount</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -46,14 +98,45 @@
                     {{ budgetitem.description }}
                 </td>
                 <td>
+                    {{ budgetitem.notes }}
+                </td>
+                <td>
+                    {{ budgetitem.get_type_display }}
+                </td>
+                <td>
                     {{ budgetitem.due_date }}
                 </td>
                 <td>
-                    {{ budgetitem.amount }}
+                    ${{ budgetitem.amount|floatformat:2|intcomma }}
                 </td>
+                <td><a href="{% url 'budgetitem-update' pk=budgetitem.id %}" class="btn btn-primary">Edit</a></td>
             </tr>
         {% endfor %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <tr>
+                <td>{{ budgetitemform.description }}</td>
+                <td>{{ budgetitemform.notes }}</td>
+                <td>{{ budgetitemform.type }}</td>
+                <td>{{ budgetitemform.due_date }}</td>
+                <td>{{ budgetitemform.amount }}</td>
+                <td><input type="submit" value="Add" class="btn btn-primary"> {{ budgetitemform.plan.as_hidden }} {{ budgetitemform.trip.as_hidden }}<input type="hidden" name="addtype" value="budgetitem"></td>
+            </tr>
+        </form>
         </tbody>
     </table>
+
+{% endblock %}
+
+{% block sidebar %}
+  {{ block.super }}
+
+
+  <hr>
+  <ul class="sidebar-nav">
+    <li><a href="{% url 'plan-update' plan.id %}">Update plan</a></li>
+    <li><a href="{% url 'plan-delete' plan.id %}">Delete plan</a></li>
+  </ul>
+
 
 {% endblock %}

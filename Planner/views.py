@@ -1,11 +1,14 @@
 from datetime import datetime
 
+from django.db.models import Sum
+from django.forms import TextInput, DateInput, Textarea
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
-from .forms import AddTripTodoForm, AddTripBudgetItemForm
+from .forms import AddTripTodoForm, AddTripBudgetItemForm, AddPlanTodoForm, AddPlanBudgetItemForm, AddTripPlanForm, \
+    TripForm, UpdateTodoForm, UpdateBudgetItemForm, PlanForm
 # Create your views here.
 from .models import PlanType, PlanStatus, Plan, Trip, Todo, BudgetItem
 
@@ -24,16 +27,16 @@ def index(request):
     today = datetime.now().date()
 
     num_budget_items = BudgetItem.objects.all().count()
-    num_past_due_todos = Todo.objects.filter(due_date__lte=today).count()
-    num_past_due_budget_items = BudgetItem.objects.filter(due_date__lte=today).count()
+    past_due_todos = Todo.objects.filter(due_date__lte=today, date_completed__isnull=True).all()
+    past_due_budget_items = BudgetItem.objects.filter(due_date__lte=today, type__in=['es','ac']).all()
 
     context = {
         'num_trips': num_trips,
         'num_plans': num_plans,
         'num_todos': num_todos,
         'num_budget_items': num_budget_items,
-        'num_past_due_todos': num_past_due_todos,
-        'num_past_due_budget_items': num_past_due_budget_items,
+        'past_due_todos': past_due_todos,
+        'past_due_budget_items': past_due_budget_items,
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -68,6 +71,10 @@ class TripDetailView(generic.DetailView):
         data = {'trip': self.object}
         context["todoform"] = AddTripTodoForm(initial=data)
         context["budgetitemform"] = AddTripBudgetItemForm(initial=data)
+        context["planform"] = AddTripPlanForm(initial=data)
+        context["budget"] = BudgetItem.objects.filter(trip=self.object).aggregate(total=Sum('amount'))
+        context["budget_expended"] = BudgetItem.objects.filter(trip=self.object, type='ex').aggregate(
+            total=Sum('amount'))
         return context
 
     def post(self, request, *args, **kwargs):
@@ -97,6 +104,19 @@ class TripDetailView(generic.DetailView):
                 context['budgetitemform'] = form
                 return self.render_to_response(context=context)
 
+        elif request.POST.get('addtype') == "plan":
+            form = AddTripPlanForm(request.POST)
+            if form.is_valid():
+                plan = form.save()
+
+                return HttpResponseRedirect(reverse('trip-detail', args=[plan.trip_id]))
+
+            else:
+                self.object = self.get_object()
+                context = super(self).get_context_data(**kwargs)
+                context['planform'] = form
+                return self.render_to_response(context=context)
+
         elif request.POST.get('completetodo'):
             todo = Todo.objects.get(pk=request.POST['completetodo'])
             todo.date_completed = datetime.now()
@@ -106,13 +126,57 @@ class TripDetailView(generic.DetailView):
 class PlanDetailView(generic.DetailView):
     model = Plan
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        data = {'trip': self.object.trip, 'plan': self.object}
+        context["todoform"] = AddPlanTodoForm(initial=data)
+        context["budgetitemform"] = AddPlanBudgetItemForm(initial=data)
+        context["budget"] = BudgetItem.objects.filter(plan=self.object).aggregate(total=Sum('amount'))
+        context["budget_expended"] = BudgetItem.objects.filter(plan=self.object, type='ex').aggregate(
+            total=Sum('amount'))
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('addtype')=="todo":
+            form = AddPlanTodoForm(request.POST)
+            if form.is_valid():
+                todo = form.save()
+
+                return HttpResponseRedirect(reverse('plan-detail', args=[todo.plan_id]))
+
+            else:
+                self.object = self.get_object()
+                context = super(self).get_context_data(**kwargs)
+                context['todoform'] = form
+                return self.render_to_response(context=context)
+
+        elif request.POST.get('addtype')=="budgetitem":
+            form = AddPlanBudgetItemForm(request.POST)
+            if form.is_valid():
+                budgetitem = form.save()
+
+                return HttpResponseRedirect(reverse('plan-detail', args=[budgetitem.plan_id]))
+
+            else:
+                self.object = self.get_object()
+                context = super(self).get_context_data(**kwargs)
+                context['budgetitemform'] = form
+                return self.render_to_response(context=context)
+
+        elif request.POST.get('completetodo'):
+            todo = Todo.objects.get(pk=request.POST['completetodo'])
+            todo.date_completed = datetime.now()
+            todo.save()
+            return HttpResponseRedirect(reverse('plan-detail', args=[todo.plan_id]))
+
 class TripCreate(CreateView):
     model = Trip
-    fields = '__all__'
+    form_class = TripForm
 
 class TripUpdate(UpdateView):
     model = Trip
-    fields = '__all__'
+    form_class = TripForm
 
 class TripDelete(DeleteView):
     model = Trip
@@ -126,3 +190,42 @@ class TripDelete(DeleteView):
             return HttpResponseRedirect(
                 reverse("trip-delete", kwargs={"pk": self.object.pk})
             )
+
+class PlanUpdate(UpdateView):
+    model = Plan
+    form_class = PlanForm
+
+class PlanDelete(DeleteView):
+    model = Plan
+
+    def form_valid(self, form):
+        try:
+            trip_id = self.object.trip.pk
+            self.object.delete()
+            return HttpResponseRedirect(
+                reverse('trip-detail', kwargs={'pk': trip_id})
+            )
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("plan-delete", kwargs={"pk": self.object.pk})
+            )
+
+class TodoUpdate(UpdateView):
+    model = Todo
+    form_class = UpdateTodoForm
+
+    def get_success_url(self):
+        if self.object.plan_id:
+            return reverse('plan-detail', args=[self.object.plan_id])
+        else:
+            return reverse('trip-detail', args=[self.object.trip_id])
+
+class BudgetItemUpdate(UpdateView):
+    model = BudgetItem
+    form_class = UpdateBudgetItemForm
+
+    def get_success_url(self):
+        if self.object.plan_id:
+            return reverse('plan-detail', args=[self.object.plan_id])
+        else:
+            return reverse('trip-detail', args=[self.object.trip_id])

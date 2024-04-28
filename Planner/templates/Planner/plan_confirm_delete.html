@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Delete Plan: {{ plan }} (From Trip: {{ plan.trip }})</h1>
+
+<p>Are you sure you want to delete the plan? The following will also be deleted:</p>
+
+<ul>
+    <li>{{ plan.todo_set.all.count }} Todos</li>
+    <li>{{ plan.budgetitem_set.all.count }} Budget Items</li>
+</ul>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="submit" value="Yes, delete." class="btn btn-primary">
+</form>
+
+{% endblock %}

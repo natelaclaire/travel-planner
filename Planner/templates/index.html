@@ -8,9 +8,29 @@
     <li><strong>Plans:</strong> {{ num_plans }}</li>
     <li><strong>Todos:</strong> {{ num_todos }}</li>
     <li><strong>Budget Items:</strong> {{ num_budget_items }}</li>
-    <li><strong>Past Due Todos:</strong> {{ num_past_due_todos }}</li>
-    <li><strong>Past Due Budget Items:</strong> {{ num_past_due_budget_items }}</li>
   </ul>
+
+    <h2>Past Due Todos:</h2>
+    <ul>
+    {% if past_due_todos.count > 0 %}
+    {% for todo in past_due_todos %}
+        <li><a href="{{ todo.trip.get_absolute_url }}#todo-{{ todo.id }}">{{ todo.trip.destination }}: {{ todo.description }}</a></li>
+    {% endfor %}
+    {% else %}
+        <li>No past due todos!</li>
+    {% endif %}
+    </ul>
+
+    <h2>Past Due Budget Items:</h2>
+    <ul>
+    {% if past_due_budget_items.count > 0 %}
+    {% for budget_item in past_due_budget_items %}
+        <li><a href="{{ budget_item.trip.get_absolute_url }}#budget-item-{{ budget_item.id }}">{{ budget_item.trip.destination }}: {{ budget_item.description }}</a></li>
+    {% endfor %}
+    {% else %}
+        <li>No past due budget items!</li>
+    {% endif %}
+    </ul>
 {% endblock %}
 
 {% block title %}

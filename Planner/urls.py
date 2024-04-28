@@ -13,4 +13,8 @@ urlpatterns = [
     path('trip/create/', views.TripCreate.as_view(), name='trip-create'),
     path('trip/<int:pk>/update/', views.TripUpdate.as_view(), name='trip-update'),
     path('trip/<int:pk>/delete/', views.TripDelete.as_view(), name='trip-delete'),
+    path('plan/<int:pk>/update/', views.PlanUpdate.as_view(), name='plan-update'),
+    path('plan/<int:pk>/delete/', views.PlanDelete.as_view(), name='plan-delete'),
+    path('budgetitem/<int:pk>/update/', views.BudgetItemUpdate.as_view(), name='budgetitem-update'),
+    path('todo/<int:pk>/update/', views.TodoUpdate.as_view(), name='todo-update'),
 ]

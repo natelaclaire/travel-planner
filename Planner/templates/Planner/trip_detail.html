@@ -1,16 +1,41 @@
 {% extends "base_generic.html" %}
 
+{% load humanize %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ trip.destination }}</li>
+{% endblock %}
+
 {% block content %}
   <h1>Destination: {{ trip.destination }}</h1>
     <p><strong>Goal Date:</strong> {{ trip.goal_date }}</p>
     <p><strong>Completed Date:</strong> {{ trip.completed_date }}</p>
     <p><strong>Notes:</strong> {{ trip.notes }}</p>
+    <p><strong>Budget:</strong>
+        {% if budget.total == None %}
+        $0.00
+        {% else %}
+        ${{ budget.total|floatformat:2|intcomma }}
+        {% endif %}
+        (
+        {% if budget_expended.total == None %}
+        $0.00
+        {% else %}
+        ${{ budget_expended.total|floatformat:2|intcomma }}
+        {% endif %}
+        expended )</p>
 
     <h2>Plans</h2>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Description</th>
+                <th>Notes</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Scheduled Start</th>
+                <th>Scheduled End</th>
             </tr>
         </thead>
         <tbody>
@@ -19,8 +44,38 @@
                 <td>
                     <a href="{{ plan.get_absolute_url }}">{{ plan.description }}</a>
                 </td>
+                <td>
+                    {{ plan.notes }}
+                </td>
+                <td>
+                    {{ plan.type }}
+                </td>
+                <td>
+                    {{ plan.status }}
+                </td>
+                <td>
+                    {{ plan.scheduled_start_date_time }}
+                </td>
+                <td>
+                    {{ plan.scheduled_end_date_time }}
+                </td>
+                <td>
+                    <a href="{% url 'plan-update' pk=plan.id %}" class="btn btn-primary">Edit</a>
+                </td>
             </tr>
         {% endfor %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <tr>
+                <td>{{ planform.description }}</td>
+                <td>{{ planform.notes }}</td>
+                <td>{{ planform.type }}</td>
+                <td>{{ planform.status }}</td>
+                <td>{{ planform.scheduled_start_date_time }}</td>
+                <td>{{ planform.scheduled_end_date_time }}</td>
+                <td><input type="submit" value="Add" class="btn btn-primary"> {{ planform.trip.as_hidden }}<input type="hidden" name="addtype" value="plan"></td>
+            </tr>
+        </form>
         </tbody>
     </table>
 
@@ -37,7 +92,7 @@
         </thead>
         <tbody>
         {% for todo in trip.todo_set.all %}
-            <tr>
+            <tr id="todo-{{ todo.id }}">
                 <td>
                     {{ todo.description }}
                 </td>
@@ -55,11 +110,12 @@
                     <a href="{{ todo.plan.get_absolute_url }}">{{ todo.plan.description }}</a>
                 </td>
                 <td>
+                    <a href="{% url 'todo-update' pk=todo.id %}" class="btn btn-primary">Edit</a>
                     {% if not todo.date_completed %}
-                    <form action="" method="post">
+                    <form action="" method="post" class="d-inline-block">
                         {% csrf_token %}
                         <input type="hidden" name="completetodo" value="{{ todo.id }}">
-                        <input type="submit" value="Mark Completed" class="btn btn-primary">
+                        <input type="submit" value="Done" class="btn btn-primary">
                     </form>
                     {% endif %}
                 </td>
@@ -88,11 +144,12 @@
                 <th>Due Date</th>
                 <th>Amount</th>
                 <th>Associated Plan</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
         {% for budgetitem in trip.budgetitem_set.all %}
-            <tr>
+            <tr id="budget-item-{{ budgetitem.id }}">
                 <td>
                     {{ budgetitem.description }}
                 </td>
@@ -100,18 +157,18 @@
                     {{ budgetitem.notes }}
                 </td>
                 <td>
-                    {{ budgetitem.type }}
+                    {{ budgetitem.get_type_display }}
                 </td>
                 <td>
                     {{ budgetitem.due_date }}
                 </td>
                 <td>
-                    {{ budgetitem.amount }}
+                    ${{ budgetitem.amount|floatformat:2|intcomma }}
                 </td>
                 <td>
                     <a href="{{ budgetitem.plan.get_absolute_url }}">{{ budgetitem.plan.description }}</a>
                 </td>
-                <td></td>
+                <td><a href="{% url 'budgetitem-update' pk=budgetitem.id %}" class="btn btn-primary">Edit</a></td>
             </tr>
         {% endfor %}
         <form action="" method="post">
