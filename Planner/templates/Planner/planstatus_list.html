@@ -14,3 +14,20 @@
     <p>There are no plan statuses.</p>
   {% endif %}
 {% endblock %}
+
+{% block title %}
+  <title>Plan Status List | Settings | Travel Planner</title>
+{% endblock %}
+{% block sidebar %}
+  {{ block.super }}
+
+  <h2 class="fs-5">Plan Status Actions</h2>
+  <ul class="sidebar-nav">
+    <li><a href="{% url 'planstatus-create' %}">Create plan status</a></li>
+  </ul>
+
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'settings' %}">Settings</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Plan Status List</li>
+{% endblock %}

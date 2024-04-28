@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Delete Todo: {{ todo }}</h1>
+
+<p>Are you sure you want to delete the todo?</p>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Yes, delete." class="btn btn-danger">
+    {% if todo.plan %}
+        <a href="{{ todo.plan.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
+    {% else %}
+        <a href="{{ todo.trip.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
+    {% endif %}
+
+</form>
+
+{% endblock %}
+
+{% block title %}
+  <title>
+    Delete Tod | {{ todo.description }}
+      {% if todo.plan %}
+        | {{ todo.plan.description }}
+      {% endif %}
+      | {{ todo.trip.destination }} | Travel Planner
+  </title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    <li class="breadcrumb-item"><a href="{{ todo.trip.get_absolute_url }}">{{ todo.trip.destination }}</a></li>
+    {% if todo.plan %}
+        <li class="breadcrumb-item"><a href="{{ todo.plan.get_absolute_url }}">{{ todo.plan.description }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item active" aria-current="page">Delete Todo</li>
+{% endblock %}

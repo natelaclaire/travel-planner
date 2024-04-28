@@ -1,6 +1,13 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<h1>
+    {% if form.instance.id %}
+        Update Trip
+    {% else %}
+        Create Trip
+    {% endif %}
+</h1>
 <form action="" method="post">
   {% csrf_token %}
   <table>
@@ -8,4 +15,24 @@
   </table>
   <input type="submit" value="Submit" class="btn btn-primary" />
 </form>
+{% endblock %}
+
+{% block title %}
+  <title>
+    {% if form.instance.id %}
+        Update Trip | {{ form.instance.destination }}
+    {% else %}
+        Create Trip
+    {% endif %}
+    | Travel Planner
+  </title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    {% if form.instance.id %}
+        <li class="breadcrumb-item"><a href="{{ form.instance.get_absolute_url }}">{{ form.instance.destination }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Update Trip</li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">Create Trip</li>
+    {% endif %}
 {% endblock %}

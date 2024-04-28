@@ -10,7 +10,7 @@
     <li><strong>Budget Items:</strong> {{ num_budget_items }}</li>
   </ul>
 
-    <h2>Past Due Todos:</h2>
+    <h2>Past Due Todos (due date is past and not completed):</h2>
     <ul>
     {% if past_due_todos.count > 0 %}
     {% for todo in past_due_todos %}
@@ -21,7 +21,7 @@
     {% endif %}
     </ul>
 
-    <h2>Past Due Budget Items:</h2>
+    <h2>Past Due Budget Items (due date is past and type is not Expended):</h2>
     <ul>
     {% if past_due_budget_items.count > 0 %}
     {% for budget_item in past_due_budget_items %}

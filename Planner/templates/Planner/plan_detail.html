@@ -2,12 +2,6 @@
 
 {% load humanize %}
 
-{% block breadcrumb %}
-    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
-    <li class="breadcrumb-item"><a href="{{ plan.trip.get_absolute_url }}">{{ plan.trip.destination }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ plan.description }}</li>
-{% endblock %}
-
 {% block content %}
   <h1>{{ plan.description }}</h1>
     <p><strong>Type:</strong> {{ plan.type }}</p>
@@ -57,6 +51,7 @@
                 </td>
                 <td>
                     <a href="{% url 'todo-update' pk=todo.id %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'todo-delete' pk=todo.id %}" class="btn btn-danger">Delete</a>
                     {% if not todo.date_completed %}
                     <form action="" method="post" class="d-inline-block">
                         {% csrf_token %}
@@ -109,7 +104,10 @@
                 <td>
                     ${{ budgetitem.amount|floatformat:2|intcomma }}
                 </td>
-                <td><a href="{% url 'budgetitem-update' pk=budgetitem.id %}" class="btn btn-primary">Edit</a></td>
+                <td>
+                    <a href="{% url 'budgetitem-update' pk=budgetitem.id %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'budgetitem-delete' pk=budgetitem.id %}" class="btn btn-danger">Delete</a>
+                </td>
             </tr>
         {% endfor %}
         <form action="" method="post">
@@ -128,15 +126,19 @@
 
 {% endblock %}
 
+{% block title %}
+  <title>{{ plan.description }} | {{ plan.trip.destination }} | Travel Planner</title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    <li class="breadcrumb-item"><a href="{{ plan.trip.get_absolute_url }}">{{ plan.trip.destination }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ plan.description }}</li>
+{% endblock %}
 {% block sidebar %}
   {{ block.super }}
-
-
-  <hr>
+  <h2 class="fs-5">Plan Actions</h2>
   <ul class="sidebar-nav">
     <li><a href="{% url 'plan-update' plan.id %}">Update plan</a></li>
     <li><a href="{% url 'plan-delete' plan.id %}">Delete plan</a></li>
   </ul>
-
-
 {% endblock %}

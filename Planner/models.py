@@ -21,7 +21,7 @@ class PlanType(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a particular plan type instance."""
-        return reverse('plantype-detail', args=[str(self.id)])
+        return reverse('plantype-update', args=[str(self.id)])
 
     class Meta:
         constraints = [
@@ -40,7 +40,7 @@ class PlanStatus(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a particular language instance."""
-        return reverse('planstatus-detail', args=[str(self.id)])
+        return reverse('planstatus-update', args=[str(self.id)])
 
     def __str__(self):
         """String for representing the Model object (in Admin site etc.)"""
@@ -61,7 +61,7 @@ class Trip(models.Model):
     goal_date = models.DateField(null=True, blank=True)
     completed_date = models.DateField(null=True, blank=True)
     notes = models.TextField(
-        max_length=1000, help_text="Enter any notes about the trip", null=True, blank=True)
+        max_length=1000, null=True, blank=True)
 
     class Meta:
         ordering = ['destination']
@@ -78,7 +78,7 @@ class Plan(models.Model):
     """Model representing a plan."""
     description = models.CharField(max_length=200)
     notes = models.TextField(
-        max_length=1000, help_text="Enter any notes about the plan", null=True, blank=True)
+        max_length=1000, null=True, blank=True)
     status = models.ForeignKey(
         PlanStatus, on_delete=models.SET_NULL, null=True)
     type = models.ForeignKey(
@@ -103,7 +103,7 @@ class Todo(models.Model):
     """Model representing a todo."""
     description = models.CharField(max_length=200)
     notes = models.TextField(
-        max_length=1000, help_text="Enter any notes about the todo", null=True, blank=True)
+        max_length=1000, null=True, blank=True)
     trip = models.ForeignKey(
         Trip, on_delete=models.CASCADE)
     plan = models.ForeignKey(
@@ -126,7 +126,7 @@ class BudgetItem(models.Model):
     """Model representing a budget item."""
     description = models.CharField(max_length=200)
     notes = models.TextField(
-        max_length=1000, help_text="Enter any notes about the budget item", null=True, blank=True)
+        max_length=1000, null=True, blank=True)
     trip = models.ForeignKey(
         Trip, on_delete=models.CASCADE)
     plan = models.ForeignKey(

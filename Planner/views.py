@@ -8,7 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from .forms import AddTripTodoForm, AddTripBudgetItemForm, AddPlanTodoForm, AddPlanBudgetItemForm, AddTripPlanForm, \
-    TripForm, UpdateTodoForm, UpdateBudgetItemForm, PlanForm
+    TripForm, UpdateTodoForm, UpdateBudgetItemForm, PlanForm, PlanStatusForm, PlanTypeForm
 # Create your views here.
 from .models import PlanType, PlanStatus, Plan, Trip, Todo, BudgetItem
 
@@ -41,6 +41,16 @@ def index(request):
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
+
+def settings(request):
+
+    # Render the HTML template settings.html with the data in the context variable
+    return render(request, 'settings.html')
+
+def about(request):
+
+    # Render the HTML template settings.html with the data in the context variable
+    return render(request, 'about.html')
 
 from django.views import generic
 
@@ -229,3 +239,91 @@ class BudgetItemUpdate(UpdateView):
             return reverse('plan-detail', args=[self.object.plan_id])
         else:
             return reverse('trip-detail', args=[self.object.trip_id])
+
+class BudgetItemDelete(DeleteView):
+    model = BudgetItem
+
+    def form_valid(self, form):
+        try:
+            if self.object.plan_id:
+                plan_id = self.object.plan.pk
+                redirect_to = reverse('plan-detail', kwargs={'pk': plan_id})
+            else:
+                trip_id = self.object.trip.pk
+                redirect_to = reverse('trip-detail', kwargs={'pk': trip_id})
+
+            self.object.delete()
+            return HttpResponseRedirect(
+                redirect_to
+            )
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("budgetitem-delete", kwargs={"pk": self.object.pk})
+            )
+
+class TodoDelete(DeleteView):
+    model = Todo
+
+    def form_valid(self, form):
+        try:
+            if self.object.plan_id:
+                plan_id = self.object.plan.pk
+                redirect_to = reverse('plan-detail', kwargs={'pk': plan_id})
+            else:
+                trip_id = self.object.trip.pk
+                redirect_to = reverse('trip-detail', kwargs={'pk': trip_id})
+
+            self.object.delete()
+            return HttpResponseRedirect(
+                redirect_to
+            )
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("todo-delete", kwargs={"pk": self.object.pk})
+            )
+
+class PlanStatusCreate(CreateView):
+    model = PlanStatus
+    form_class = PlanStatusForm
+    success_url = reverse_lazy('planstatuses')
+
+class PlanStatusUpdate(UpdateView):
+    model = PlanStatus
+    form_class = PlanStatusForm
+    success_url = reverse_lazy('planstatuses')
+
+class PlanTypeCreate(CreateView):
+    model = PlanType
+    form_class = PlanTypeForm
+    success_url = reverse_lazy('plantypes')
+
+class PlanTypeUpdate(UpdateView):
+    model = PlanType
+    form_class = PlanTypeForm
+    success_url = reverse_lazy('plantypes')
+
+class PlanTypeDelete(DeleteView):
+    model = PlanType
+    success_url = reverse_lazy('plantypes')
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+            return HttpResponseRedirect(self.success_url)
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("plantype-delete", kwargs={"pk": self.object.pk})
+            )
+
+class PlanStatusDelete(DeleteView):
+    model = PlanStatus
+    success_url = reverse_lazy('planstatuses')
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+            return HttpResponseRedirect(self.success_url)
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("planstatus-delete", kwargs={"pk": self.object.pk})
+            )

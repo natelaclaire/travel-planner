@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Settings</h1>
+  <ul>
+    <li><a href="{% url 'planstatuses' %}">Plan Statuses</a></li>
+    <li><a href="{% url 'plantypes' %}">Plan Types</a></li>
+  </ul>
+{% endblock %}
+
+{% block title %}
+  <title>Settings | Travel Planner</title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">Settings</li>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Delete Budget Item: {{ budgetitem }}</h1>
+
+<p>Are you sure you want to delete the budget item?</p>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Yes, delete." class="btn btn-danger">
+    {% if budgetitem.plan %}
+        <a href="{{ budgetitem.plan.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
+    {% else %}
+        <a href="{{ budgetitem.trip.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
+    {% endif %}
+
+</form>
+
+{% endblock %}
+
+{% block title %}
+  <title>
+    Delete Budget Item | {{ budgetitem.description }}
+      {% if budgetitem.plan %}
+        | {{ budgetitem.plan.description }}
+      {% endif %}
+      | {{ budgetitem.trip.destination }} | Travel Planner
+  </title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    <li class="breadcrumb-item"><a href="{{ budgetitem.trip.get_absolute_url }}">{{ budgetitem.trip.destination }}</a></li>
+    {% if budgetitem.plan %}
+        <li class="breadcrumb-item"><a href="{{ budgetitem.plan.get_absolute_url }}">{{ budgetitem.plan.description }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item active" aria-current="page">Delete Budget Item</li>
+{% endblock %}

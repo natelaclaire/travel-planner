@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>About</h1>
+  <p class="pb-3 mb-3">This app makes use of the <a href="https://getbootstrap.com/">Bootstrap</a> front-end toolkit and borrows some design elements and the color mode selector from the Bootstrap documentation, as allowed under the Creative Commons license. Additionally, some code is based on the approaches taken in <a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Tutorial_local_library_website">Mozilla Developer Network's Django Tutorial: The Local Library website</a>, which I completed to help me get started learning Django for this project.</p>
+  <p class="pb-3 mb-3">The app was built using <a href="https://www.jetbrains.com/pycharm/">PyCharm Professional</a> under an academic license in order to take advantage of the Django tools found in the Professional version. Additionally, <a href="https://github.com/features/copilot">GitHub Copilot</a> was used mostly to save keystrokes rather than to actually solve problems (like autocomplete on steroids). Actually, I could have saved myself a lot of time if I had trusted Copilot more - on multiple occasions Copilot recommended code that I thought was wrong, so I rewrote it. In most of those cases, through trial and error as well as documentation exploration, I discovered that Copilot's suggestions were actually appropriate and my solution didn't work because I misunderstood how Django approached that particular component. By the way, I have not tried actually asking Copilot for any code, I always simply started typing and then accepted its suggestions when they made sense to me (or when they didn't make sense but would save me keystrokes and I could modify the suggestions to do what I wanted).</p>
+{% endblock %}
+
+{% block title %}
+  <title>About | Travel Planner</title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">About</li>
+{% endblock %}

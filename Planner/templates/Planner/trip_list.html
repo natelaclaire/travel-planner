@@ -1,9 +1,5 @@
 {% extends "base_generic.html" %}
 
-{% block breadcrumb %}
-    <li class="breadcrumb-item active" aria-current="page">Trips</li>
-{% endblock %}
-
 {% block content %}
   <h1>Trip List</h1>
   {% if trip_list %}
@@ -22,11 +18,14 @@
 {% block sidebar %}
   {{ block.super }}
 
-
-  <hr>
+  <h2 class="fs-5">Trip Actions</h2>
   <ul class="sidebar-nav">
     <li><a href="{% url 'trip-create' %}">Create trip</a></li>
   </ul>
-
-
+{% endblock %}
+{% block title %}
+  <title>Trips | Travel Planner</title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">Trips</li>
 {% endblock %}

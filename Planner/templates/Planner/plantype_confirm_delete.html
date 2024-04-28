@@ -1,0 +1,27 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Delete Plan Type: {{ plantype.name }}</h1>
+
+<p>Are you sure you want to delete the plan type? The type on {{ plantype.plan_set.all.count }} plans will be set to None.</p>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Yes, delete." class="btn btn-danger">
+    <a href="{{ plantype.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}
+
+{% block title %}
+  <title>
+    Delete Plan Type | {{ plantype.name }} | Settings | Travel Planner
+  </title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'settings' %}">Settings</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plantypes' %}">Plan Types</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plantype-update' plantype.id %}">{{ plantype.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Delete Plan Type</li>
+{% endblock %}

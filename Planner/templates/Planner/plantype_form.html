@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>
+    {% if form.instance.id %}
+        Update Plan Type
+    {% else %}
+        Create Plan Type
+    {% endif %}
+</h1>
+<form action="" method="post">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+  </table>
+  <input type="submit" value="Submit" class="btn btn-primary" />
+</form>
+{% endblock %}
+
+{% block title %}
+  <title>
+    {% if form.instance.id %}
+        Update Plan Type | {{ form.instance.name }}
+    {% else %}
+        Create Plan Type
+    {% endif %}
+      | Plan Types | Settings | Travel Planner</title>
+{% endblock %}
+{% block sidebar %}
+  {{ block.super }}
+{% if form.instance.id %}
+  <h2 class="fs-5">Plan Type Actions</h2>
+  <ul class="sidebar-nav">
+    <li><a href="{% url 'plantype-delete' form.instance.id %}">Delete plan type</a></li>
+  </ul>
+{% endif %}
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'settings' %}">Settings</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plantypes' %}">Plan Types</a></li>
+    {% if form.instance.id %}
+        <li class="breadcrumb-item active" aria-current="page">Update Plan Type: {{ form.instance.name }}</li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">Create Plan Type</li>
+    {% endif %}
+{% endblock %}

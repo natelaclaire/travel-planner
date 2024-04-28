@@ -36,6 +36,7 @@
                 <th>Status</th>
                 <th>Scheduled Start</th>
                 <th>Scheduled End</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -111,6 +112,7 @@
                 </td>
                 <td>
                     <a href="{% url 'todo-update' pk=todo.id %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'todo-delete' pk=todo.id %}" class="btn btn-danger">Delete</a>
                     {% if not todo.date_completed %}
                     <form action="" method="post" class="d-inline-block">
                         {% csrf_token %}
@@ -168,7 +170,10 @@
                 <td>
                     <a href="{{ budgetitem.plan.get_absolute_url }}">{{ budgetitem.plan.description }}</a>
                 </td>
-                <td><a href="{% url 'budgetitem-update' pk=budgetitem.id %}" class="btn btn-primary">Edit</a></td>
+                <td>
+                    <a href="{% url 'budgetitem-update' pk=budgetitem.id %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'budgetitem-delete' pk=budgetitem.id %}" class="btn btn-danger">Delete</a>
+                </td>
             </tr>
         {% endfor %}
         <form action="" method="post">
@@ -188,15 +193,16 @@
 
 {% endblock %}
 
+{% block title %}
+  <title>{{ trip.destination }} | Travel Planner</title>
+{% endblock %}
 {% block sidebar %}
   {{ block.super }}
 
-
-  <hr>
+  <h2 class="fs-5">Trip Actions</h2>
   <ul class="sidebar-nav">
     <li><a href="{% url 'trip-update' trip.id %}">Update trip</a></li>
     <li><a href="{% url 'trip-delete' trip.id %}">Delete trip</a></li>
   </ul>
-
 
 {% endblock %}

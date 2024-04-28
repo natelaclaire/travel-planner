@@ -12,8 +12,21 @@
 </ul>
 
 <form action="" method="POST">
-  {% csrf_token %}
-  <input type="submit" value="Yes, delete." class="btn btn-primary">
+    {% csrf_token %}
+    <input type="submit" value="Yes, delete." class="btn btn-danger">
+    <a href="{{ plan.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
 </form>
 
+{% endblock %}
+
+{% block title %}
+  <title>
+    Delete Plan | {{ plan.description }} | {{ plan.trip.destination }} | Travel Planner
+  </title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    <li class="breadcrumb-item"><a href="{{ plan.trip.get_absolute_url }}">{{ plan.trip.destination }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ plan.get_absolute_url }}">{{ plan.description }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Delete Plan</li>
 {% endblock %}

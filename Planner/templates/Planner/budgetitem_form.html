@@ -1,6 +1,13 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<h1>
+    {% if form.instance.id %}
+        Update Budget Item
+    {% else %}
+        Create Budget Item
+    {% endif %}
+</h1>
 <form action="" method="post">
   {% csrf_token %}
   <table>
@@ -8,4 +15,37 @@
   </table>
   <input type="submit" value="Submit" class="btn btn-primary" />
 </form>
+{% endblock %}
+
+{% block title %}
+  <title>
+    {% if form.instance.id %}
+        Update Budget Item | {{ form.instance.description }}
+    {% else %}
+        Create Budget Item
+    {% endif %}
+    {% if form.instance.trip %}
+        {% if form.instance.plan %}
+            | {{ form.instance.plan.description }}
+        {% endif %}
+        | {{ form.instance.trip.destination }}
+    {% endif %}
+    | Travel Planner
+  </title>
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'trips' %}">Trips</a></li>
+    {% if form.instance.trip %}
+        <li class="breadcrumb-item"><a href="{{ form.instance.trip.get_absolute_url }}">{{ form.instance.trip.destination }}</a></li>
+        {% if form.instance.plan %}
+            <li class="breadcrumb-item"><a href="{{ form.instance.plan.get_absolute_url }}">{{ form.instance.plan.description }}</a></li>
+        {% endif %}
+    {% endif %}
+    <li class="breadcrumb-item active" aria-current="page">
+        {% if form.instance.id %}
+            Update Budget Item
+        {% else %}
+            Create Budget Item
+        {% endif %}
+    </li>
 {% endblock %}

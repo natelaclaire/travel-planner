@@ -3,7 +3,7 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, DateInput, Select, Textarea, DateTimeInput, SplitDateTimeWidget
 
-from Planner.models import Trip, Todo, BudgetItem, Plan
+from Planner.models import Trip, Todo, BudgetItem, Plan, PlanStatus, PlanType
 
 
 class AddTripPlanForm(ModelForm):
@@ -13,7 +13,7 @@ class AddTripPlanForm(ModelForm):
         fields = ['description', 'notes', 'trip', 'type', 'status', 'scheduled_start_date_time', 'scheduled_end_date_time']
         widgets = {
             'description': TextInput(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class': 'form-control', 'rows': 1}),
             'type': Select(attrs={'class': 'form-select'}),
             'status': Select(attrs={'class': 'form-select'}),
             'scheduled_start_date_time': DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
@@ -27,7 +27,7 @@ class AddTripTodoForm(ModelForm):
         fields = ['description', 'notes', 'trip', 'plan', 'due_date']
         widgets = {
             'description': TextInput(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class': 'form-control', 'rows': 1}),
             'plan': Select(attrs={'class': 'form-select'}),
             'due_date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
@@ -39,7 +39,7 @@ class AddTripBudgetItemForm(ModelForm):
         fields = ['description', 'notes', 'trip', 'plan', 'due_date', 'amount', 'type']
         widgets = {
             'description': TextInput(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class': 'form-control', 'rows': 1}),
             'plan': Select(attrs={'class': 'form-select'}),
             'due_date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'type': Select(attrs={'class': 'form-select'}),
@@ -53,7 +53,7 @@ class AddPlanTodoForm(ModelForm):
         fields = ['description', 'notes', 'trip', 'plan', 'due_date']
         widgets = {
             'description': TextInput(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class': 'form-control', 'rows': 1}),
             'due_date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
@@ -64,7 +64,7 @@ class AddPlanBudgetItemForm(ModelForm):
         fields = ['description', 'notes', 'trip', 'plan', 'due_date', 'amount', 'type']
         widgets = {
             'description': TextInput(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class': 'form-control', 'rows': 1}),
             'due_date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'type': Select(attrs={'class': 'form-select'}),
             'amount': TextInput(attrs={'class': 'form-control'}),
@@ -114,7 +114,25 @@ class UpdateTodoForm(ModelForm):
         fields = ['description', 'notes', 'due_date', 'date_completed']
         widgets = {
             'description': TextInput(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class': 'form-control', 'rows': 1}),
             'due_date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'date_completed': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+class PlanStatusForm(ModelForm):
+
+    class Meta:
+        model = PlanStatus
+        fields = ['name']
+        widgets = {
+            'name': TextInput(attrs={'class': 'form-control'}),
+        }
+
+class PlanTypeForm(ModelForm):
+
+    class Meta:
+        model = PlanType
+        fields = ['name']
+        widgets = {
+            'name': TextInput(attrs={'class': 'form-control'}),
         }
