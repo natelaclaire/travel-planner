@@ -1,15 +1,13 @@
 from datetime import datetime
 
 from django.db.models import Sum
-from django.forms import TextInput, DateInput, Textarea
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 
 from .forms import AddTripTodoForm, AddTripBudgetItemForm, AddPlanTodoForm, AddPlanBudgetItemForm, AddTripPlanForm, \
     TripForm, UpdateTodoForm, UpdateBudgetItemForm, PlanForm, PlanStatusForm, PlanTypeForm
-# Create your views here.
 from .models import PlanType, PlanStatus, Plan, Trip, Todo, BudgetItem
 
 def index(request):
@@ -49,30 +47,28 @@ def settings(request):
 
 def about(request):
 
-    # Render the HTML template settings.html with the data in the context variable
+    # Render the HTML template about.html with the data in the context variable
     return render(request, 'about.html')
 
-from django.views import generic
-
-class PlanTypeListView(generic.ListView):
+class PlanTypeListView(ListView):
     model = PlanType
     paginate_by = 10
 
-class PlanTypeDetailView(generic.DetailView):
+class PlanTypeDetailView(DetailView):
     model = PlanType
 
-class PlanStatusListView(generic.ListView):
+class PlanStatusListView(ListView):
     model = PlanStatus
     paginate_by = 10
 
-class PlanStatusDetailView(generic.DetailView):
+class PlanStatusDetailView(DetailView):
     model = PlanStatus
 
-class TripListView(generic.ListView):
+class TripListView(ListView):
     model = Trip
     paginate_by = 10
 
-class TripDetailView(generic.DetailView):
+class TripDetailView(DetailView):
     model = Trip
 
     def get_context_data(self, **kwargs):
@@ -133,7 +129,7 @@ class TripDetailView(generic.DetailView):
             todo.save()
             return HttpResponseRedirect(reverse('trip-detail', args=[todo.trip_id]))
 
-class PlanDetailView(generic.DetailView):
+class PlanDetailView(DetailView):
     model = Plan
 
     def get_context_data(self, **kwargs):
